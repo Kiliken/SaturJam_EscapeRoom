@@ -44,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Space(10)]
     public Transform orientation;
+    [SerializeField] Transform cameraPos;
 
     float horizontalInput;
     float verticalInput;
@@ -87,11 +88,11 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         if (Input.GetAxisRaw("Jump")!=0 && readyToJump && grounded) {
-            readyToJump = false;
+            //readyToJump = false;
             //Debug.Log("jump");
-            Jump();
+            //Jump();
 
-            Invoke(nameof(ResetJump), jumpCooldown);
+            //Invoke(nameof(ResetJump), jumpCooldown);
         }
 
         if (Input.GetAxisRaw("Crouch") != 0) {
@@ -195,7 +196,8 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void SpeedControl() {
+    private void SpeedControl()
+    {
 
         if (OnSlope() && !exitingSlope)
         {
@@ -203,7 +205,8 @@ public class PlayerMovement : MonoBehaviour
                 rb.velocity = rb.velocity.normalized * moveSpeed;
         }
 
-        else {
+        else
+        {
             Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
             if (flatVel.magnitude > moveSpeed)
@@ -211,6 +214,11 @@ public class PlayerMovement : MonoBehaviour
                 Vector3 limitedVel = flatVel.normalized * moveSpeed;
                 rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
             }
+        }
+
+        if (rb.velocity.magnitude > 1f)
+        {
+            cameraPos.localPosition = new Vector3(0f,Mathf.Sin(Time.time * (moveSpeed > 9f ? 15f : 10f)) * 0.15f + 0.8f,0f);
         }
     }
 
